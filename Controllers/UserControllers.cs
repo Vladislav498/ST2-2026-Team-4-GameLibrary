@@ -11,7 +11,7 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
             return View();
         }
 
-        public IActionResult Details(int id)
+        public IActionResult Details(string id)
         {
             return View();
         }
@@ -33,14 +33,14 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
             return View(user);
         }
 
-        public IActionResult Edit(int id)
+        public IActionResult Edit(string id)
         {
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, User user)
+        public IActionResult Edit(string id, User user)
         {
             if (id != user.Id)
             {
@@ -55,14 +55,14 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
             return View(user);
         }
 
-        public IActionResult Delete(int id)
+        public IActionResult Delete(string id)
         {
             return View();
         }
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(string id)
         {
             return RedirectToAction(nameof(Index));
         }

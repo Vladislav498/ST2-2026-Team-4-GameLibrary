@@ -7,6 +7,7 @@ namespace ST2_2026_Team_4_GameLibrary.Models;
 public class User : IdentityUser
 //polzvame IdentityUser za da polzvame vgradenite funkcii kato UserName, Email, PasswordHash, PhoneNumber i roli
 //promenqm username-a samo zasega
+
 {
 
 
@@ -34,6 +35,7 @@ public class User : IdentityUser
         set => base.UserName = value;
     }
 
+    
     public List<Library> Libraries { get; set; } = new();
 }
 
