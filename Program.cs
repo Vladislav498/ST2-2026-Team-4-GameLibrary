@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using ST2_2026_Team_4_GameLibrary.Models;
 using ST2_2026_Team_4_GameLibrary.Data;
-using ST2_2026_Team_4_GameLibrary.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
