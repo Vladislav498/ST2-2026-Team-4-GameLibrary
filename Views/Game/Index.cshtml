@@ -1,0 +1,66 @@
+@model IEnumerable<ST2_2026_Team_4_GameLibrary.Models.Game>
+
+@{
+    ViewData["Title"] = "Каталог с игри";
+}
+
+<h1>Каталог с игри</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Добави игра</a>
+</p>
+
+<form asp-action="Index" method="get" class="mb-3">
+    <label for="genre" class="form-label">Филтър по жанр</label>
+
+    <select name="genre" id="genre" class="form-select" onchange="this.form.submit()">
+        <option value="">Всички жанрове</option>
+
+        @foreach (string genre in (IEnumerable<string>)ViewBag.Genres)
+        {
+            if (genre == (string?)ViewBag.SelectedGenre)
+            {
+                <option value="@genre" selected>@genre</option>
+            }
+            else
+            {
+                <option value="@genre">@genre</option>
+            }
+        }
+    </select>
+</form>
+
+@if (!Model.Any())
+{
+    <p>Все още няма добавени игри.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Заглавие</th>
+                <th>Жанр</th>
+                <th>Разработчик</th>
+                <th>Дата на издаване</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var game in Model)
+            {
+                <tr>
+                    <td>@game.Title</td>
+                    <td>@game.Genre</td>
+                    <td>@game.Developer</td>
+                    <td>@game.ReleaseDate.ToString("dd.MM.yyyy")</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@game.Id">Детайли</a> |
+                        <a asp-action="Edit" asp-route-id="@game.Id">Редактирай</a> |
+                        <a asp-action="Delete" asp-route-id="@game.Id">Изтрий</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

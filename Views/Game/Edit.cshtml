@@ -1,0 +1,58 @@
+```cshtml
+@model ST2_2026_Team_4_GameLibrary.Models.Game
+
+@{
+    ViewData["Title"] = "Редактирай игра";
+}
+
+<h1>Редактирай игра</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label">Заглавие</label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Genre" class="form-label">Жанр</label>
+                <input asp-for="Genre" class="form-control" />
+                <span asp-validation-for="Genre" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Developer" class="form-label">Разработчик</label>
+                <input asp-for="Developer" class="form-control" />
+                <span asp-validation-for="Developer" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ReleaseDate" class="form-label">Дата на издаване</label>
+                <input asp-for="ReleaseDate" type="date" class="form-control" />
+                <span asp-validation-for="ReleaseDate" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label">Описание</label>
+                <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="CoverImage" class="form-label">Линк към корицата</label>
+                <input asp-for="CoverImage" class="form-control" />
+                <span asp-validation-for="CoverImage" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Запази промените</button>
+            <a asp-action="Index" class="btn btn-secondary">Отказ</a>
+        </form>
+    </div>
+</div>
+```

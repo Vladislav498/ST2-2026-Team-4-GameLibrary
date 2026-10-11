@@ -1,0 +1,29 @@
+@model ST2_2026_Team_4_GameLibrary.Models.Game
+
+@{
+    ViewData["Title"] = "Изтриване на игра";
+}
+
+<h1>Изтриване на игра</h1>
+
+<div class="alert alert-warning">
+    Сигурна ли си, че искаш да изтриеш тази игра?
+    Това действие не може да бъде отменено.
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">@Model.Title</h4>
+
+        <p><strong>Жанр:</strong> @Model.Genre</p>
+        <p><strong>Разработчик:</strong> @Model.Developer</p>
+        <p><strong>Дата на издаване:</strong> @Model.ReleaseDate.ToString("dd.MM.yyyy")</p>
+
+        <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <button type="submit" class="btn btn-danger">Да, изтрий</button>
+            <a asp-action="Index" class="btn btn-secondary">Отказ</a>
+        </form>
+    </div>
+</div>
