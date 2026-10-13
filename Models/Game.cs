@@ -25,7 +25,7 @@ namespace ST2_2026_Team_4_GameLibrary.Models
         [StringLength(100)]
         public string Developer { get; set; } = string.Empty;
 
-        public string? CoverImage { get; set; }
+        public string? CoverImage{ get; set; }
         //putq do izobrazhenieto (moje da go mahnem ako nqma vreme)
         //images/minecraft.jpg
         //minecraft server when?

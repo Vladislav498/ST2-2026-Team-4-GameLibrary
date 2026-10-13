@@ -1,34 +1,64 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using ST2_2026_Team_4_GameLibrary.Data;
 using ST2_2026_Team_4_GameLibrary.Models;
-
 
 namespace ST2_2026_Team_4_GameLibrary.Services
 {
-    //suzdavam kolekciq s id-ta na igri, posle shte polzvame kato foreach za da se pokajat v nqkoe ot viewtata
-
-    public class FeaturedGamesSingleton
+    public sealed class FeaturedGamesSingleton
     {
+        private static  AppDbContext? _context = null;
+        private static readonly Random _random = new Random();
+        private static FeaturedGamesSingleton? instance = null;
+        private static object _lock = new object();
 
-        private readonly HashSet<int> featuredGameIds = new();
-
-        public IReadOnlyCollection<int> FeaturedGameIds =>
-            featuredGameIds.ToArray();
-
-        public bool IsFeatured(int gameId)
+        private FeaturedGamesSingleton()
         {
-            return featuredGameIds.Contains(gameId);
+           
         }
 
-        public void Add(int gameId)
+        public static FeaturedGamesSingleton GetSingleInstance(AppDbContext context)
         {
-            featuredGameIds.Add(gameId);
+            if (instance == null)
+            {
+                lock (_lock)
+                {
+                    if (instance == null)
+
+                    {
+
+                        _context = context;
+                        instance = new FeaturedGamesSingleton();
+                    }
+                }
+            }
+            return instance;
         }
 
-        public void Remove(int gameId)
+        public static  List<Game> GetFeaturedGames(int count = 4)
         {
-            featuredGameIds.Remove(gameId);
-        }
+            // Get all games from database using GamesSeed
+            var allGames = GamesSeed.Initialize(_context!);
 
-      
+            if (allGames == null || !allGames.Any())
+            {
+                return new List<Game>();
+            }
+
+            // Ensure we don't request more games than available
+            var takeCount = Math.Min(count, allGames.Count);
+
+            // Use Fisher-Yates shuffle to ensure unique selection
+            var shuffledGames = new List<Game>(allGames);
+            for (int i = shuffledGames.Count - 1; i > 0; i--)
+            {
+                int j = _random.Next(i + 1);
+                // Swap elements
+                (shuffledGames[i], shuffledGames[j]) = (shuffledGames[j], shuffledGames[i]);
+            }
+
+            return shuffledGames.Take(takeCount).ToList();
+        }
     }
 }

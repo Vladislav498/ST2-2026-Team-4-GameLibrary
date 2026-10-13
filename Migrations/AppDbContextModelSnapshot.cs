@@ -182,7 +182,7 @@ namespace ST2_2026_Team_4_GameLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Games");
+                    b.ToTable("Games", (string)null);
                 });
 
             modelBuilder.Entity("ST2_2026_Team_4_GameLibrary.Models.Library", b =>
@@ -197,7 +197,7 @@ namespace ST2_2026_Team_4_GameLibrary.Migrations
 
                     b.HasIndex("GameId");
 
-                    b.ToTable("Libraries");
+                    b.ToTable("Libraries", (string)null);
                 });
 
             modelBuilder.Entity("ST2_2026_Team_4_GameLibrary.Models.User", b =>

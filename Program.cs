@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using ST2_2026_Team_4_GameLibrary.Models;
 using ST2_2026_Team_4_GameLibrary.Data;
+using ST2_2026_Team_4_GameLibrary.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
+
 
 
 
@@ -38,5 +40,23 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+//slagam seedovete v bazata 
+//kato rabotite posle triite app.db i ako izleznat podobni failove
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+   
+        var context = services.GetRequiredService<AppDbContext>();
+        context.Database.Migrate();
+
+        
+        //GamesSeed.Initialize(context);
+
+   // builder.Services.AddSingleton<FeaturedGamesSingleton>(FeaturedGamesSingleton.GetSingleInstance(scope.ServiceProvider.GetRequiredService<AppDbContext>()));
+
+
+    // context.Add<FeaturedGamesSingleton>(FeaturedGamesSingleton.GetSingleInstance(context));
+}
 
 app.Run();

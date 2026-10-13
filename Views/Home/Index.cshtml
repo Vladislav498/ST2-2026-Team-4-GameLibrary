@@ -1,8 +1,224 @@
-﻿@{
+@model IEnumerable<ST2_2026_Team_4_GameLibrary.Models.Game>
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 60px 20px;
+        text-align: center;
+        border-radius: 10px;
+        margin-bottom: 40px;
+    }
+
+    .hero-section h1 {
+        font-size: 3rem;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+
+    .hero-section p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+    }
+
+    .featured-games {
+        margin-bottom: 40px;
+    }
+
+    .featured-games h2 {
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 30px;
+        color: #333;
+    }
+
+    .games-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+
+    .game-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .game-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .game-image {
+        width: 100%;
+        height: 200px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 3rem;
+        object-fit: cover;
+    }
+
+    .game-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .game-info {
+        padding: 20px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .game-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .game-description {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+        flex-grow: 1;
+        line-height: 1.5;
+    }
+
+    .game-price {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 15px;
+    }
+
+    .game-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-view {
+        flex: 1;
+        padding: 10px;
+        background-color: #667eea;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        transition: background-color 0.3s ease;
+        font-weight: bold;
+    }
+
+    .btn-view:hover {
+        background-color: #5568d3;
+        text-decoration: none;
+        color: white;
+    }
+
+    .no-games {
+        text-align: center;
+        padding: 60px 20px;
+        background-color: #f5f5f5;
+        border-radius: 10px;
+        color: #666;
+    }
+
+    .no-games-icon {
+        font-size: 4rem;
+        margin-bottom: 20px;
+    }
+
+    .no-games p {
+        font-size: 1.2rem;
+    }
+
+    @@media (max-width: 768px) {
+        .hero-section {
+            padding: 40px 15px;
+        }
+
+        .hero-section h1 {
+            font-size: 2rem;
+        }
+
+        .games-grid {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .game-image {
+            height: 150px;
+        }
+    }
+</style>
+
+<div class="hero-section">
+    <h1>🎮 Welcome to GameLibrary</h1>
+    <p>Discover and explore our collection of amazing games</p>
+</div>
+
+<div class="featured-games">
+    <h2>⭐ Featured Games</h2>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="games-grid">
+            @foreach (var game in Model)
+            {
+                <div class="game-card">
+                    <div class="game-image">
+                        @if (!string.IsNullOrEmpty(game.CoverImage))
+                        {
+                            <img src="@game.CoverImage" alt="@game.Title" />
+                        }
+                        else
+                        {
+                            <div>🎲</div>
+                        }
+                    </div>
+                    <div class="game-info">
+                        <div class="game-title">@game.Title</div>
+                        <div class="game-description">
+                            @if (!string.IsNullOrEmpty(game.Description))
+                            {
+                                @(game.Description.Length > 100 ? game.Description.Substring(0, 100) + "..." : game.Description)
+                            }
+                        </div>
+                       
+                        <div class="game-actions">
+                            <a href="@Url.Action("Details", "Games", new { id = game.Id })" class="btn-view">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="no-games">
+            <div class="no-games-icon">🎮</div>
+            <p>No featured games available at the moment.</p>
+            <p>Check back soon for exciting new games!</p>
+        </div>
+    }
+</div>
+
+<hr />
+
+<div style="text-align: center; padding: 20px;">
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core" target="_blank">building Web apps with ASP.NET Core</a>.</p>
 </div>
