@@ -19,9 +19,20 @@ parola: Admin@123 (v nachaloto zabravih che iska simvoli za parolata....i debugv
 nqkoi viewta veche ne mogat da se vijdat ot useri
 
 !!!!!!!!!!!!!!!!
-ako iskate view da se vijda ot opredelena rolq
+ako iskate view da se vijda ot opredelena rolq (v kontrolera)
+ [Authorize(Roles = "Admin")]
 
-veche ne triite app.db
+ vseki da vijda dadeno view dori i da ne e lognat (v kontrolera)
+   [AllowAnonymous]
+
+element da se pokazva samo za opredelena rolq (vuv view)
+@if (User.IsInRole("Admin")){   -------  html --------  }
+
+
+element da se pokazva samo za lognat user (vuv view)
+      @if (User.Identity?.IsAuthenticated == true)
+
+veche ne triite app.db!!!!
 
 
 
