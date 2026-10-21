@@ -13,8 +13,15 @@
 
 
 
+Dobavih rlite s login i logout
+emailut e moq studentskiq: stu2401681016@uni-plovdiv.bg
+parola: Admin@123 (v nachaloto zabravih che iska simvoli za parolata....i debugvah kum dva chasa)
+nqkoi viewta veche ne mogat da se vijdat ot useri
 
+!!!!!!!!!!!!!!!!
+ako iskate view da se vijda ot opredelena rolq
 
+veche ne triite app.db
 
 
 

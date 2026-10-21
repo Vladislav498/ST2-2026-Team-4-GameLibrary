@@ -167,12 +167,12 @@
 </style>
 
 <div class="hero-section">
-    <h1>🎮 Welcome to GameLibrary</h1>
+    <h1>Welcome to GameLibrary</h1>
     <p>Discover and explore our collection of amazing games</p>
 </div>
 
 <div class="featured-games">
-    <h2>⭐ Featured Games</h2>
+    <h2>Recommended</h2>
 
     @if (Model != null && Model.Any())
     {
@@ -181,9 +181,9 @@
             {
                 <div class="game-card">
                     <div class="game-image">
-                        @if (!string.IsNullOrEmpty(game.CoverImage))
+                        @if (!string.IsNullOrEmpty(game.ImagePath))
                         {
-                            <img src="@game.CoverImage" alt="@game.Title" />
+                            <img src="@game.ImagePath" alt="@game.Title" />
                         }
                         else
                         {
@@ -218,7 +218,3 @@
 </div>
 
 <hr />
-
-<div style="text-align: center; padding: 20px;">
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core" target="_blank">building Web apps with ASP.NET Core</a>.</p>
-</div>

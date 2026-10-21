@@ -10,20 +10,22 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
     public class HomeController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly FeaturedGamesSingleton _featuredGamesSingleton;
 
-        public HomeController(AppDbContext context)
+        public HomeController(AppDbContext context, FeaturedGamesSingleton featuredGamesSingleton)
         {
             _context = context;
+            _featuredGamesSingleton = featuredGamesSingleton;
         }
 
         public IActionResult Index()
         {
-            // Get 4 random featured games
-            var featuredGamesSingle = FeaturedGamesSingleton.GetSingleInstance(_context);
-
-            var featuredGames = FeaturedGamesSingleton.GetFeaturedGames(4);
+           
+            var featuredGames = _featuredGamesSingleton.GetFeaturedGames(4);
             return View(featuredGames);
         }
+
+       
 
         public IActionResult Privacy()
         {

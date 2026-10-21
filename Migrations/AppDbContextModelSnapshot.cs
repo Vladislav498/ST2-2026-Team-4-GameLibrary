@@ -155,9 +155,6 @@ namespace ST2_2026_Team_4_GameLibrary.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("CoverImage")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Description")
                         .HasMaxLength(2000)
                         .HasColumnType("TEXT");
@@ -172,6 +169,9 @@ namespace ST2_2026_Team_4_GameLibrary.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("ImagePath")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("TEXT");
 
@@ -182,7 +182,7 @@ namespace ST2_2026_Team_4_GameLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Games", (string)null);
+                    b.ToTable("Games");
                 });
 
             modelBuilder.Entity("ST2_2026_Team_4_GameLibrary.Models.Library", b =>
@@ -197,7 +197,7 @@ namespace ST2_2026_Team_4_GameLibrary.Migrations
 
                     b.HasIndex("GameId");
 
-                    b.ToTable("Libraries", (string)null);
+                    b.ToTable("Libraries");
                 });
 
             modelBuilder.Entity("ST2_2026_Team_4_GameLibrary.Models.User", b =>

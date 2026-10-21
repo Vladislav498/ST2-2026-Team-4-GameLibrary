@@ -10,9 +10,20 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
+builder.Services.AddDefaultIdentity<User>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = false;
+    options.User.RequireUniqueEmail = true;
+})
    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
+
+// Register Role service
+builder.Services.AddScoped<Roles>();
+builder.Services.AddScoped<Admin>();
+
+// Register FeaturedGamesSingleton (uses IServiceScopeFactory internally)
+builder.Services.AddSingleton<FeaturedGamesSingleton>();
 
 
 
@@ -40,23 +51,22 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
-//slagam seedovete v bazata 
-//kato rabotite posle triite app.db i ako izleznat podobni failove
+
 
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-   
-        var context = services.GetRequiredService<AppDbContext>();
-        context.Database.Migrate();
 
-        
-        //GamesSeed.Initialize(context);
-
-   // builder.Services.AddSingleton<FeaturedGamesSingleton>(FeaturedGamesSingleton.GetSingleInstance(scope.ServiceProvider.GetRequiredService<AppDbContext>()));
+    var context = services.GetRequiredService<AppDbContext>();
+    context.Database.Migrate();
 
 
-    // context.Add<FeaturedGamesSingleton>(FeaturedGamesSingleton.GetSingleInstance(context));
+    var roleSeeder = services.GetRequiredService<Roles>();
+    await roleSeeder.SeedRolesAsync();
+
+  //admin akaunt
+    var adminSeeder = services.GetRequiredService<Admin>();
+    await adminSeeder.SeedAdminAsync();
 }
 
 app.Run();

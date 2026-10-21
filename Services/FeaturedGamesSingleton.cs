@@ -6,59 +6,46 @@ using ST2_2026_Team_4_GameLibrary.Models;
 
 namespace ST2_2026_Team_4_GameLibrary.Services
 {
+
+    //https://www.c-sharpcorner.com/article/understanding-iservicescopefactory-in-net-when-why-and-how-to-use-it-with-r
+    
     public sealed class FeaturedGamesSingleton
     {
-        private static  AppDbContext? _context = null;
+        private readonly IServiceScopeFactory _scopeFactory;
         private static readonly Random _random = new Random();
-        private static FeaturedGamesSingleton? instance = null;
-        private static object _lock = new object();
 
-        private FeaturedGamesSingleton()
+        public FeaturedGamesSingleton(IServiceScopeFactory scopeFactory)
         {
-           
+            _scopeFactory = scopeFactory;
         }
 
-        public static FeaturedGamesSingleton GetSingleInstance(AppDbContext context)
+        public List<Game> GetFeaturedGames(int count = 4)
         {
-            if (instance == null)
+            // Create a fresh scope and get a new context for this operation
+            using (var scope = _scopeFactory.CreateScope())
             {
-                lock (_lock)
+                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                var allGames = GamesSeed.Initialize(context);
+
+                if (allGames == null || !allGames.Any())
                 {
-                    if (instance == null)
-
-                    {
-
-                        _context = context;
-                        instance = new FeaturedGamesSingleton();
-                    }
+                    return new List<Game>();
                 }
+
+                // Ensure we don't request more games than available
+                var takeCount = Math.Min(count, allGames.Count);
+
+                // Use Fisher-Yates shuffle to ensure unique selection
+                var shuffledGames = new List<Game>(allGames);
+                for (int i = shuffledGames.Count - 1; i > 0; i--)
+                {
+                    int j = _random.Next(i + 1);
+                    // Swap elements
+                    (shuffledGames[i], shuffledGames[j]) = (shuffledGames[j], shuffledGames[i]);
+                }
+
+                return shuffledGames.Take(takeCount).ToList();
             }
-            return instance;
-        }
-
-        public static  List<Game> GetFeaturedGames(int count = 4)
-        {
-            // Get all games from database using GamesSeed
-            var allGames = GamesSeed.Initialize(_context!);
-
-            if (allGames == null || !allGames.Any())
-            {
-                return new List<Game>();
-            }
-
-            // Ensure we don't request more games than available
-            var takeCount = Math.Min(count, allGames.Count);
-
-            // Use Fisher-Yates shuffle to ensure unique selection
-            var shuffledGames = new List<Game>(allGames);
-            for (int i = shuffledGames.Count - 1; i > 0; i--)
-            {
-                int j = _random.Next(i + 1);
-                // Swap elements
-                (shuffledGames[i], shuffledGames[j]) = (shuffledGames[j], shuffledGames[i]);
-            }
-
-            return shuffledGames.Take(takeCount).ToList();
         }
     }
 }

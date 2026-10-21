@@ -27,34 +27,62 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Game" asp-action="Index">Каталог с
-                                игри</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home"
-                                   asp-action="Privacy">Privacy</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-        </header>
-        <div class="container">
-            <main role="main" class="pb-3">
-                @RenderBody()
-            </main>
-        </div>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Game" asp-action="Index">
+                                Каталог с
+                                игри
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home"
+                               asp-action="Privacy">Privacy</a>
+                        </li>
 
-        <footer class="border-top footer text-muted">
-            <div class="container">
-                &copy; 2026 - ST2_2026_Team_4_GameLibrary - <a asp-area="" asp-controller="Home"
-                                                               asp-action="Privacy">Privacy</a>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <div class="logged">
+        <form asp-controller="Account"
+              asp-action="Logout"
+              method="post">
+            <button type="submit" class="nav-link text-dark">
+                Logout
+            </button>
+        </form>
+    </div>
+                            
+                        }
+                        else
+                        {
+                          <div class="logged">
+                                <li>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Account"
+                                   asp-action="Login">Вход</a>
+                            </li>
+                           </div>
+                        }
+
+                           
+
+                    </ul>
+                </div>
             </div>
-        </footer>
-        <script src="~/lib/jquery/dist/jquery.min.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
-        @await RenderSectionAsync("Scripts", required: false)
-    </body>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2026 - ST2_2026_Team_4_GameLibrary - <a asp-area="" asp-controller="Home"
+                                                           asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
 
 </html>

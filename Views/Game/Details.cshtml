@@ -20,6 +20,9 @@
         <p>@(string.IsNullOrWhiteSpace(Model.Description) ? "Няма добавено описание." : Model.Description)</p>
 
         <a asp-action="Index" class="btn btn-secondary">Назад към каталога</a>
+        @if (User.IsInRole("Admin")){
         <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Редактирай</a>
+        }
+        
     </div>
 </div>

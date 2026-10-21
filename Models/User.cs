@@ -26,7 +26,7 @@ public class User : IdentityUser
 	[Required(ErrorMessage = "Името е задължително.")]
 	[StringLength(40, MinimumLength = 2, ErrorMessage = "Името може да съдържа от 2 до 40 символа.")]
 	[RegularExpression(NamePattern, ErrorMessage = "Позволени са само букви, интервал, тире, апостроф и точка.")]
-    [Remote(action:"IsNameAvailable", controller:"User", ErrorMessage = "Името се използва от друг потребител.")]
+    
  
     // trqbva da napravim UserController + metod IsNameAvailable, koito da proverqva dali imeto e svobodno
     public override string? UserName
