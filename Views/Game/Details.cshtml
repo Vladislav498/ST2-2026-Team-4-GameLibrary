@@ -1,0 +1,28 @@
+@model ST2_2026_Team_4_GameLibrary.Models.Game
+
+@{
+    ViewData["Title"] = "Детайли за играта";
+}
+
+<h1>Детайли за играта</h1>
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">@Model.Title</h4>
+
+        <p><strong>Жанр:</strong> @Model.Genre</p>
+
+        <p><strong>Разработчик:</strong> @Model.Developer</p>
+
+        <p><strong>Дата на издаване:</strong> @Model.ReleaseDate.ToString("dd.MM.yyyy")</p>
+
+        <p><strong>Описание:</strong></p>
+        <p>@(string.IsNullOrWhiteSpace(Model.Description) ? "Няма добавено описание." : Model.Description)</p>
+
+        <a asp-action="Index" class="btn btn-secondary">Назад към каталога</a>
+        @if (User.IsInRole("Admin")){
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Редактирай</a>
+        }
+        
+    </div>
+</div>
