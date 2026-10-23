@@ -6,6 +6,33 @@
 
 <h1>Каталог с игри</h1>
 
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">AI търсене на игри</h5>
+        <p class="text-muted">
+            Опиши на естествен език каква игра търсиш.
+        </p>
+
+        <form asp-action="Index" method="get">
+            <div class="input-group">
+                <input
+                    type="text"
+                    name="aiQuery"
+                    class="form-control"
+                    placeholder="Например: Намери ми RPG игри"
+                    value="@ViewBag.AiQuery" />
+
+                <button type="submit" class="btn btn-primary">
+                    <span class="me-1">✨</span> AI търсене
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
 @if (User.IsInRole("Admin"))
 {
     <p>

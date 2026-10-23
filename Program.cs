@@ -3,11 +3,15 @@ using Microsoft.AspNetCore.Identity;
 using ST2_2026_Team_4_GameLibrary.Models;
 using ST2_2026_Team_4_GameLibrary.Data;
 using ST2_2026_Team_4_GameLibrary.Services;
+using ST2_2026_Team_4_GameLibrary.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.Configure<ExternalApisOptions>(
+    builder.Configuration.GetSection(ExternalApisOptions.SectionName));
+    builder.Services.AddHttpClient<IGeminiQueryService, GeminiQueryService>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDefaultIdentity<User>(options =>
@@ -27,7 +31,7 @@ builder.Services.AddSingleton<FeaturedGamesSingleton>();
 
 
 
-
+builder.Services.AddScoped<GameQueryExecutor>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

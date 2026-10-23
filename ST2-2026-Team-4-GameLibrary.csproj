@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>ST2_2026_Team_4_GameLibrary</RootNamespace>
+    <UserSecretsId>ec86fc36-6515-427f-88a5-9ca17d1a486b</UserSecretsId>
   </PropertyGroup>
 
 
