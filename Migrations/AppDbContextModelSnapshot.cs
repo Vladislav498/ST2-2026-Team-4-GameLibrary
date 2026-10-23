@@ -155,9 +155,6 @@ namespace ST2_2026_Team_4_GameLibrary.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("CoverImage")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Description")
                         .HasMaxLength(2000)
                         .HasColumnType("TEXT");
@@ -170,6 +167,9 @@ namespace ST2_2026_Team_4_GameLibrary.Migrations
                     b.Property<string>("Genre")
                         .IsRequired()
                         .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ImagePath")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("ReleaseDate")

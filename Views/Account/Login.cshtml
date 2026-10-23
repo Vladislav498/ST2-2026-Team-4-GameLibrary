@@ -1,0 +1,33 @@
+@model LoginDto
+@{
+    ViewData["Title"] = "Log in";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly"></div>
+
+    <div>
+        <label asp-for="Email"></label>
+        <input asp-for="Email" />
+        <span asp-validation-for="Email"></span>
+    </div>
+
+    <div>
+        <label asp-for="Password"></label>
+        <input asp-for="Password" type="password" />
+        <span asp-validation-for="Password"></span>
+    </div>
+
+    <div>
+        <label asp-for="RememberMe"></label>
+        <input asp-for="RememberMe" />
+    </div>
+
+    <button type="submit">Sign in</button>
+</form>
+
+<p>
+    <a asp-action="Register" asp-controller="Account">Create a new account</a>
+</p>

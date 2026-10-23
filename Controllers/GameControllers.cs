@@ -1,46 +1,226 @@
-using System.Diagnostics;
+
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ST2_2026_Team_4_GameLibrary.Models;
+using ST2_2026_Team_4_GameLibrary.Data;
+using ST2_2026_Team_4_GameLibrary.Services;
 
 namespace ST2_2026_Team_4_GameLibrary.Controllers
 {
     public class GameController : Controller
     {
-        public IActionResult Index()
+        private readonly AppDbContext _context;
+        private readonly IWebHostEnvironment _environment;
+        private readonly IGeminiQueryService _geminiQueryService;
+        private readonly GameQueryExecutor _gameQueryExecutor;
+
+        public GameController(
+            AppDbContext context,
+            IWebHostEnvironment environment,
+            IGeminiQueryService geminiQueryService,
+            GameQueryExecutor gameQueryExecutor)
         {
-            return View();
+            _context = context;
+            _environment = environment;
+            _geminiQueryService = geminiQueryService;
+            _gameQueryExecutor = gameQueryExecutor;
         }
 
+        // GET: Game/Index
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> Index(
+            string? genre,
+            string? aiQuery,
+            CancellationToken cancellationToken)
+        {
+            ViewBag.Genres = await _context.Games
+                .Select(g => g.Genre)
+                .Distinct()
+                .OrderBy(g => g)
+                .ToListAsync(cancellationToken);
+
+            ViewBag.SelectedGenre = genre;
+            ViewBag.AiQuery = aiQuery;
+            ViewBag.AiError = null;
+
+            IQueryable<Game> gamesQuery = _context.Games.AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(aiQuery))
+            {
+                var geminiResult = await _geminiQueryService
+                    .GenerateJsonQueryAsync(
+                        aiQuery.Trim(),
+                        cancellationToken);
+
+                if (!geminiResult.Success ||
+                    string.IsNullOrWhiteSpace(geminiResult.Query))
+                {
+                    ViewBag.AiError = geminiResult.ErrorMessage
+                        ?? "AI търсенето не беше успешно.";
+
+                    var fallbackGames = await gamesQuery
+                        .OrderBy(g => g.Title)
+                        .ToListAsync(cancellationToken);
+
+                    return View(fallbackGames);
+                }
+
+                try
+                {
+                    var jsonQuery =
+                        System.Text.Json.JsonSerializer.Deserialize<JSONQuery>(
+                            geminiResult.Query);
+
+                    if (!GameQueryValidator.TryValidate(
+                        jsonQuery, out var validationError))
+                    {
+                        ViewBag.AiError =
+                            $"Невалидна AI заявка: {validationError}";
+
+                        var fallbackGames = await gamesQuery
+                            .OrderBy(g => g.Title)
+                            .ToListAsync(cancellationToken);
+
+                        return View(fallbackGames);
+                    }
+
+                    var games = await _gameQueryExecutor.ExecuteAsync(
+                        jsonQuery!,
+                        cancellationToken);
+
+                    ViewBag.AiSearchActive = true;
+
+                    return View(games);
+                }
+                catch (System.Text.Json.JsonException)
+                {
+                    ViewBag.AiError =
+                        "AI върна отговор, който не може да бъде обработен.";
+                }
+                catch (ArgumentException ex)
+                {
+                    ViewBag.AiError = ex.Message;
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(genre))
+            {
+                gamesQuery = gamesQuery.Where(g => g.Genre == genre);
+            }
+
+            var result = await gamesQuery
+                .OrderBy(g => g.Title)
+                .ToListAsync(cancellationToken);
+
+            return View(result);
+        }
+
+        // GET: Game/Create
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
 
+        // POST: Game/Create
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Game game)
+        public async Task<IActionResult> Create(Game game)
         {
             if (ModelState.IsValid)
             {
+                if (game.CoverImage != null && game.CoverImage.Length > 0)
+                {
+                    if (game.CoverImage.Length > 5 * 1024 * 1024)
+                    {
+                        ModelState.AddModelError(
+                            "CoverImage",
+                            "Image must be 5 MB or smaller.");
+
+                        return View(game);
+                    }
+
+                    var extension = Path.GetExtension(
+                        game.CoverImage.FileName).ToLowerInvariant();
+
+                    var allowedExtensions =
+                        new[] { ".jpg", ".jpeg", ".png", ".webp" };
+
+                    if (!allowedExtensions.Contains(extension))
+                    {
+                        ModelState.AddModelError(
+                            "CoverImage",
+                            "Only JPG, PNG and WEBP images are allowed.");
+
+                        return View(game);
+                    }
+
+                    var uploadsFolder = Path.Combine(
+                        _environment.WebRootPath, "images", "games");
+
+                    Directory.CreateDirectory(uploadsFolder);
+
+                    var fileName = $"{Guid.NewGuid()}{extension}";
+                    var filePath = Path.Combine(uploadsFolder, fileName);
+
+                    using (var stream = new FileStream(
+                        filePath, FileMode.Create))
+                    {
+                        await game.CoverImage.CopyToAsync(stream);
+                    }
+
+                    game.ImagePath = $"/images/games/{fileName}";
+                }
+
+                _context.Games.Add(game);
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
 
             return View(game);
         }
 
-        public IActionResult Details(int id)
+        // GET: Game/Details
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> Details(int id)
         {
-            return View();
+            var game = await _context.Games
+                .FirstOrDefaultAsync(g => g.Id == id);
+
+            if (game == null)
+            {
+                return NotFound();
+            }
+
+            return View(game);
         }
 
-        public IActionResult Edit(int id)
+        // GET: Game/Edit
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(int id)
         {
-            return View();
+            var game = await _context.Games.FindAsync(id);
+
+            if (game == null)
+            {
+                return NotFound();
+            }
+
+            return View(game);
         }
 
+        // POST: Game/Edit
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, Game game)
+        public async Task<IActionResult> Edit(int id, Game game)
         {
             if (id != game.Id)
             {
@@ -49,21 +229,58 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
 
             if (ModelState.IsValid)
             {
+                _context.Games.Update(game);
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
 
             return View(game);
         }
 
-        public IActionResult Delete(int id)
+        // GET: Game/Delete
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(int id)
         {
-            return View();
+            var game = await _context.Games
+                .FirstOrDefaultAsync(g => g.Id == id);
+
+            if (game == null)
+            {
+                return NotFound();
+            }
+
+            return View(game);
         }
 
+        // POST: Game/Delete
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var game = await _context.Games.FindAsync(id);
+
+            if (game != null)
+            {
+                if (!string.IsNullOrEmpty(game.ImagePath))
+                {
+                    var imagePath = Path.Combine(
+                        _environment.WebRootPath,
+                        game.ImagePath.TrimStart('/')
+                            .Replace('/', Path.DirectorySeparatorChar));
+
+                    if (System.IO.File.Exists(imagePath))
+                    {
+                        System.IO.File.Delete(imagePath);
+                    }
+                }
+
+                _context.Games.Remove(game);
+                await _context.SaveChangesAsync();
+            }
+
             return RedirectToAction(nameof(Index));
         }
     }

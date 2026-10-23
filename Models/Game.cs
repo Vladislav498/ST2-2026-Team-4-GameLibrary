@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ST2_2026_Team_4_GameLibrary.Models
 {
@@ -25,10 +26,10 @@ namespace ST2_2026_Team_4_GameLibrary.Models
         [StringLength(100)]
         public string Developer { get; set; } = string.Empty;
 
-        public string? CoverImage { get; set; }
-        //putq do izobrazhenieto (moje da go mahnem ako nqma vreme)
-        //images/minecraft.jpg
-        //minecraft server when?
+        public string? ImagePath{ get; set; }
+
+        [NotMapped]
+        public IFormFile? CoverImage { get; set; }
 
 
         public List<Library> Libraries { get; set; } = new();

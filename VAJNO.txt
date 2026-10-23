@@ -1,3 +1,64 @@
 - ВЕЧЕ СЪМ ДОБАВИЛА БИБЛИОТЕКИТЕ ЗА БАЗАТА ДАННИ SQLITE ДА НЕ СИ ИГРАЕМ С ОТДЕЛНА БАЗА ДАННИ
 - СЪЗДАВАМ USER клас после ни трябва и контролер за някои методи от валидацията. ползвам един интерфейс да оправим после ролите
 - ЩЕ ВИДЯ ДА ОПРАВЯ МИГРАЦИИТЕ
+
+-------------------------------------------------------------------------
+
+- филтър по жанр
+- singleton за предложени игри (после ще видим с foreach да ги добавим най-вероятно в Index) според айдито да зарежда игра и снимка
+- между другото от интерфейса Identity айдито е стринг
+- добавих някакви игри със снимки (още не съм тествала дали се зареждат, ще пробвам като правя featured)може да добавите още някакви ако се сетите
+
+--------------------------------------------------------------------------
+
+
+
+Dobavih rlite s login i logout
+emailut e moq studentskiq: stu2401681016@uni-plovdiv.bg
+parola: Admin@123 (v nachaloto zabravih che iska simvoli za parolata....i debugvah kum dva chasa)
+nqkoi viewta veche ne mogat da se vijdat ot useri
+
+!!!!!!!!!!!!!!!!
+ako iskate view da se vijda ot opredelena rolq (v kontrolera)
+ [Authorize(Roles = "Admin")]
+
+ vseki da vijda dadeno view dori i da ne e lognat (v kontrolera)
+   [AllowAnonymous]
+
+element da se pokazva samo za opredelena rolq (vuv view)
+@if (User.IsInRole("Admin")){   -------  html --------  }
+
+
+element da se pokazva samo za lognat user (vuv view)
+      @if (User.Identity?.IsAuthenticated == true)
+
+veche ne triite app.db!!!!
+
+
+
+
+
+
+
+@model - един вид казва че е някакъв вид обект от моделите, може и да е списък от обекти
+
+viewbag - контролерът го изпраща като допълнителна информация към view (променливи списъци съобщения и т.н)
+
+
+
+
+
+--------------------------------------------------------------------------
+
+AI интеграция: 
+с RestAPI
+добавено е поле за AI търсене из каталога на игрите
+разширен е GameController за обработка на заяките и връщане на резутат
+dобавих IGeminiQueryService и GeminiQueryService за комуникация с езиковия моделите
+модели за заявките, валидатор и изпълнител
+Настроено е съхранението на GaminiAPI kлюча чрез .NET User Secrets
+Тествах с RPG игри (трябваше да добавя игри за теста и ги махнах)
+
+
+
+

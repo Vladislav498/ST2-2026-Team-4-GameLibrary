@@ -2,19 +2,36 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using ST2_2026_Team_4_GameLibrary.Models;
 using ST2_2026_Team_4_GameLibrary.Data;
+using ST2_2026_Team_4_GameLibrary.Services;
+using ST2_2026_Team_4_GameLibrary.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.Configure<ExternalApisOptions>(
+    builder.Configuration.GetSection(ExternalApisOptions.SectionName));
+    builder.Services.AddHttpClient<IGeminiQueryService, GeminiQueryService>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
+builder.Services.AddDefaultIdentity<User>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = false;
+    options.User.RequireUniqueEmail = true;
+})
    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
 
+// Register Role service
+builder.Services.AddScoped<Roles>();
+builder.Services.AddScoped<Admin>();
+
+// Register FeaturedGamesSingleton (uses IServiceScopeFactory internally)
+builder.Services.AddSingleton<FeaturedGamesSingleton>();
 
 
+
+builder.Services.AddScoped<GameQueryExecutor>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -38,5 +55,22 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var context = services.GetRequiredService<AppDbContext>();
+    context.Database.Migrate();
+
+
+    var roleSeeder = services.GetRequiredService<Roles>();
+    await roleSeeder.SeedRolesAsync();
+
+  //admin akaunt
+    var adminSeeder = services.GetRequiredService<Admin>();
+    await adminSeeder.SeedAdminAsync();
+}
 
 app.Run();
