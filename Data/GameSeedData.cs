@@ -15,7 +15,7 @@ namespace ST2_2026_Team_4_GameLibrary.Data
                     Genre = "RPG",
                     ReleaseDate = new DateTime(2015, 5, 19),
                     Developer = "CD Projekt Red",
-                    CoverImage = "https://store-images.s-microsoft.com/image/apps.50400.65858607118306853.fbb50b59-ac60-4f64-9908-5f89de905ebd.934c451c-9859-4b75-a29e-af255d2d8fab"
+                    CoverImage = "images/witcher3.jpg"
                 },
 
                 new Game
@@ -25,7 +25,7 @@ namespace ST2_2026_Team_4_GameLibrary.Data
                     Genre = "Sandbox",
                     ReleaseDate = new DateTime(2011, 11, 18),
                     Developer = "Mojang Studios",
-                    CoverImage = "https://image.api.playstation.com/vulcan/ap/rnd/202407/0401/670c294ded3baf4fa11068db2ec6758c63f7daeb266a35a1.png"
+                    CoverImage = "images/minecraft.jpg"
                 },
 
                 new Game
@@ -35,7 +35,7 @@ namespace ST2_2026_Team_4_GameLibrary.Data
                     Genre = "RPG",
                     ReleaseDate = new DateTime(2020, 12, 10),
                     Developer = "CD Projekt Red",
-                    CoverImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWQ1nm4TbLNoBbJc5Y2zjJ_KxWue3dYlBwVnXUmZ5NYVu9p2zkoXTQt9hV&s=10"
+                    CoverImage = "images/cyberpunk2077.jpg"
                 },
 
                 new Game
@@ -45,7 +45,7 @@ namespace ST2_2026_Team_4_GameLibrary.Data
                     Genre = "Action",
                     ReleaseDate = new DateTime(2013, 9, 17),
                     Developer = "Rockstar North",
-                    CoverImage = "https://store-images.s-microsoft.com/image/apps.32034.68565266983380288.0f5ef871-88c0-45f7-b108-6aacbc041fcf.9b094362-c51d-49e5-9e92-80710c585fca"
+                    CoverImage = "images/gta5.jpg"
                 },
 
                 new Game
@@ -55,7 +55,7 @@ namespace ST2_2026_Team_4_GameLibrary.Data
                     Genre = "Action",
                     ReleaseDate = new DateTime(2018, 10, 26),
                     Developer = "Rockstar Studios",
-                    CoverImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZEMtBJYOKeuFxpFxD846h9sm-Imbb8ByWulSO3eLwXUZFB_K088aNjHjk&s=10"
+                    CoverImage = "images/rdr2.jpg"
                 },
 
                 new Game
@@ -130,16 +130,6 @@ namespace ST2_2026_Team_4_GameLibrary.Data
 
                 new Game
                 {
-                    Title = "Terraria",
-                    Description = "2D sandbox игра с изследване, строене и битки.",
-                    Genre = "Sandbox",
-                    ReleaseDate = new DateTime(2011, 5, 16),
-                    Developer = "Re-Logic",
-                    CoverImage = "images/terraria.jpg"
-                },
-
-                new Game
-                {
                     Title = "Stardew Valley",
                     Description = "Симулатор за ферма с изследване, занаяти и взаимоотношения.",
                     Genre = "Simulation",
@@ -155,7 +145,7 @@ namespace ST2_2026_Team_4_GameLibrary.Data
                     Genre = "Action",
                     ReleaseDate = new DateTime(2004, 10, 26),
                     Developer = "Rockstar North",
-                    CoverImage = "images/gtasanandreas.jpg"
+                    CoverImage = "images/"
                 }
             };
         }
