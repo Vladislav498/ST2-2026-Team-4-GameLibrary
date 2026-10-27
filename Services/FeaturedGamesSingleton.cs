@@ -25,7 +25,7 @@ namespace ST2_2026_Team_4_GameLibrary.Services
             using (var scope = _scopeFactory.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                var allGames = GamesSeed.Initialize(context);
+                var allGames = GameSeed.Initialize(context);
 
                 if (allGames == null || !allGames.Any())
                 {

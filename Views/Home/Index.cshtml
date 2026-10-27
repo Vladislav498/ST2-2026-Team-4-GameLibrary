@@ -200,7 +200,12 @@
                         </div>
                        
                         <div class="game-actions">
-                            <a href="@Url.Action("Details", "Games", new { id = game.Id })" class="btn-view">View Details</a>
+                            <a asp-action="Details"
+   asp-controller="Game"
+   asp-route-id="@game.Id"
+   class="btn-view">
+    View Details
+</a>
                         </div>
                     </div>
                 </div>

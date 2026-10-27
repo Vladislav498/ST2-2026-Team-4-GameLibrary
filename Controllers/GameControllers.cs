@@ -35,11 +35,18 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
             string? aiQuery,
             CancellationToken cancellationToken)
         {
-            ViewBag.Genres = await _context.Games
-                .Select(g => g.Genre)
-                .Distinct()
+            var allGenres = await _context.Games
+     .AsNoTracking()
+     .Select(g => g.Genre)
+     .ToListAsync(cancellationToken);
+
+            ViewBag.Genres = allGenres
+                .Where(g => !string.IsNullOrWhiteSpace(g))
+                .SelectMany(g => g.Split(',', StringSplitOptions.TrimEntries))
+                .Where(g => !string.IsNullOrWhiteSpace(g))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
                 .OrderBy(g => g)
-                .ToListAsync(cancellationToken);
+                .ToList();
 
             ViewBag.SelectedGenre = genre;
             ViewBag.AiQuery = aiQuery;
@@ -107,7 +114,9 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
 
             if (!string.IsNullOrWhiteSpace(genre))
             {
-                gamesQuery = gamesQuery.Where(g => g.Genre == genre);
+                gamesQuery = gamesQuery.Where(g =>
+                    ("," + g.Genre.Replace(" ", "") + ",")
+                    .Contains("," + genre.Replace(" ", "") + ","));
             }
 
             var result = await gamesQuery
@@ -148,13 +157,13 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
                         game.CoverImage.FileName).ToLowerInvariant();
 
                     var allowedExtensions =
-                        new[] { ".jpg", ".jpeg", ".png", ".webp" };
+                        new[] { ".jpg", ".jpeg", ".png", ".webp", ".avif" };
 
                     if (!allowedExtensions.Contains(extension))
                     {
                         ModelState.AddModelError(
                             "CoverImage",
-                            "Only JPG, PNG and WEBP images are allowed.");
+                            "Само изображения с разширения .JPG, .PNG, .WEBP, .AVIF са позволени.");
 
                         return View(game);
                     }
@@ -220,6 +229,7 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
+       
         public async Task<IActionResult> Edit(int id, Game game)
         {
             if (id != game.Id)
@@ -227,16 +237,102 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
                 return BadRequest();
             }
 
-            if (ModelState.IsValid)
-            {
-                _context.Games.Update(game);
-                await _context.SaveChangesAsync();
+            var existing = await _context.Games.FindAsync(id);
 
-                return RedirectToAction(nameof(Index));
+            if (existing == null)
+            {
+                return NotFound();
             }
 
-            return View(game);
+            if (!ModelState.IsValid)
+            {
+                return View(game);
+            }
+
+         
+            existing.Title = game.Title;
+            existing.Description = game.Description;
+            existing.Genre = game.Genre;
+            existing.ReleaseDate = game.ReleaseDate;
+            existing.Developer = game.Developer;
+
+            string? oldImagePath = existing.ImagePath;
+
+      
+
+
+
+            if (game.CoverImage != null && game.CoverImage.Length > 0)
+            {
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+                var extension = Path.GetExtension(game.CoverImage.FileName)
+                    .ToLowerInvariant();
+
+                if (!allowedExtensions.Contains(extension))
+                {
+                    ModelState.AddModelError(
+                        "CoverImage",
+                        "Моля, качете JPG, PNG или WEBP изображение.");
+
+                    return View(game);
+                }
+
+                if (game.CoverImage.Length > 5 * 1024 * 1024)
+                {
+                    ModelState.AddModelError(
+                        "CoverImage",
+                        "Изображението не трябва да надвишава 5 MB.");
+
+                    return View(game);
+                }
+
+                var uploadsFolder = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "wwwroot",
+                    "images",
+                    "games");
+
+                Directory.CreateDirectory(uploadsFolder);
+
+                var fileName = $"{Guid.NewGuid()}{extension}";
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                await using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await game.CoverImage.CopyToAsync(stream);
+                }
+
+                existing.ImagePath = "/images/games/" + fileName;
+            }
+
+            await _context.SaveChangesAsync();
+
+            
+            if (game.CoverImage != null &&
+                !string.IsNullOrEmpty(oldImagePath))
+            {
+                var oldFileName = Path.GetFileName(oldImagePath);
+
+                var oldFilePath = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "wwwroot",
+                    "images",
+                    "games",
+                    oldFileName);
+
+                if (System.IO.File.Exists(oldFilePath))
+                {
+                    System.IO.File.Delete(oldFilePath);
+                }
+            }
+
+            return RedirectToAction(nameof(Index));
         }
+
+
+
+
+
 
         // GET: Game/Delete
         [HttpGet]
