@@ -12,8 +12,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.Configure<ExternalApisOptions>(
     builder.Configuration.GetSection(ExternalApisOptions.SectionName));
     builder.Services.AddHttpClient<IGeminiQueryService, GeminiQueryService>();
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContextFactory<AppDbContext>(options =>
+    options.UseSqlite(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDefaultIdentity<User>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;

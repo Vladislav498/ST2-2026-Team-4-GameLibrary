@@ -6,7 +6,7 @@
 
 <h1>Потребители</h1>
 
-@if (!Model.Any())
+@if (!Model.Any() || Model == null)
 {
     <p>Няма потребители.</p>
 }
@@ -29,8 +29,20 @@ else
             {
                 <tr>
                     <td>@user.UserName</td>
+
+
+
                     <td>@user.Email</td>
+
+
+
+
                     <td>@user.PhoneNumber</td>
+
+
+
+
+
                     @if (User.IsInRole("Admin"))
                     {
                         <td>

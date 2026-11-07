@@ -1,8 +1,9 @@
+using Microsoft.EntityFrameworkCore;
+using ST2_2026_Team_4_GameLibrary.Data;
+using ST2_2026_Team_4_GameLibrary.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ST2_2026_Team_4_GameLibrary.Data;
-using ST2_2026_Team_4_GameLibrary.Models;
 
 namespace ST2_2026_Team_4_GameLibrary.Services
 {
@@ -11,20 +12,20 @@ namespace ST2_2026_Team_4_GameLibrary.Services
     
     public sealed class FeaturedGamesSingleton
     {
-        private readonly IServiceScopeFactory _scopeFactory;
+        private readonly IDbContextFactory<AppDbContext> _contextFactory;
         private static readonly Random _random = new Random();
 
-        public FeaturedGamesSingleton(IServiceScopeFactory scopeFactory)
+        public FeaturedGamesSingleton(IDbContextFactory<AppDbContext> contextFactory)
         {
-            _scopeFactory = scopeFactory;
+            _contextFactory = contextFactory;
         }
 
         public List<Game> GetFeaturedGames(int count = 4)
         {
-            // Create a fresh scope and get a new context for this operation
-            using (var scope = _scopeFactory.CreateScope())
+
+            using (var scope = _contextFactory.CreateDbContext())
             {
-                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                using var context = _contextFactory.CreateDbContext();
                 var allGames = GameSeed.Initialize(context);
 
                 if (allGames == null || !allGames.Any())
@@ -32,20 +33,30 @@ namespace ST2_2026_Team_4_GameLibrary.Services
                     return new List<Game>();
                 }
 
-                // Ensure we don't request more games than available
+
                 var takeCount = Math.Min(count, allGames.Count);
 
-                // Use Fisher-Yates shuffle to ensure unique selection
+
                 var shuffledGames = new List<Game>(allGames);
                 for (int i = shuffledGames.Count - 1; i > 0; i--)
                 {
                     int j = _random.Next(i + 1);
-                    // Swap elements
+
                     (shuffledGames[i], shuffledGames[j]) = (shuffledGames[j], shuffledGames[i]);
                 }
 
                 return shuffledGames.Take(takeCount).ToList();
             }
-        }
+
+
+
+
+
+
+    
+
+
+
+}
     }
 }
