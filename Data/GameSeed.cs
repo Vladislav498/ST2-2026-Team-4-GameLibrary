@@ -12,10 +12,10 @@ namespace ST2_2026_Team_4_GameLibrary.Models
             {
                 if (context == null) throw new ArgumentNullException(nameof(context));
 
-                // Ensure database is created (use Migrate in production if you use migrations)
+               
                 context.Database.EnsureCreated();
 
-                // Load games from database. Use AsNoTracking for read-only performance.
+              
                 var games = context.Games
                                    .AsNoTracking()
                                    .ToList();
