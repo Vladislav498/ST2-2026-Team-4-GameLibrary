@@ -19,7 +19,9 @@
     box-sizing: border-box;
 }
 
-
+[hidden] {
+    display: none !important;
+}
 
 html, body {
     background-color: var(--base);
@@ -551,6 +553,22 @@ main {
 
 
 
+#nameChangeDiv, #emailChangeDiv {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#passwordForm{
+    margin-top:30px;
+   
+}
+
+#nameChangeDiv span {
+    font-weight: 600;
+    font-size: 2rem;
+}
+
 .no-games {
     text-align: center;
     padding: 60px 20px;
@@ -604,8 +622,9 @@ main {
 
 
 .profile-container {
-    max-width: 800px;
+    max-width: 700px;
     margin: 2rem auto;
+
 }
 
 .profile-heading {
@@ -621,6 +640,7 @@ main {
     border: 1px solid var(--accent);
     border-radius: 10px;
     padding: 2rem;
+    padding-bottom: 100px;
     margin-bottom: 1.5rem;
 }
 
@@ -699,6 +719,24 @@ main {
     text-decoration: none;
     cursor: pointer;
     transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-small {
+    display: inline-block;
+    padding: 0.30rem 0.6rem;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: var(--text-primary);
+  
 }
 
 .btn-primary {
@@ -803,6 +841,7 @@ main {
 
     .profile-card {
         padding: 1.25rem;
+    
     }
 
     .profile-heading {

@@ -1,23 +1,27 @@
 ﻿
-function toggleSingleField(formId, fieldId, buttonId, inputId, editText, saveText) {
+function toggleSingleField(formId, fieldId, buttonId, inputId, editText, saveText, layoutdiv) {
     const form = document.getElementById(formId);
     const field = document.getElementById(fieldId);
     const button = document.getElementById(buttonId);
     const input = document.getElementById(inputId);
+    const layout = document.getElementById(layoutdiv);
 
     if (!form || !field || !button || !input) return;
 
     if (field.hidden) {
         field.hidden = false;
         input.disabled = false;
+        layout.style.display = "block";
+        form.style.marginTop = "30px";
         button.textContent = saveText;
     } else {
         if (!form.reportValidity()) return;
+
         form.requestSubmit();
     }
 }
 
-function toggleMultipleFields(formId, fieldClass, buttonId, inputClass, editText, saveText) {
+function toggleMultipleFields(formId, fieldClass, buttonId, inputClass, editText, saveText, layoutdiv) {
     const form = document.getElementById(formId);
     const button = document.getElementById(buttonId);
 
@@ -25,12 +29,11 @@ function toggleMultipleFields(formId, fieldClass, buttonId, inputClass, editText
 
     const fields = form.querySelectorAll("." + fieldClass);
     const inputs = form.querySelectorAll("." + inputClass);
+    const layout = document.getElementById(layoutdiv);
 
     if (!fields.length) return;
 
-    const shouldShow = Array.from(fields).some(field => field.hidden);
-
-    if (shouldShow) {
+    if (fields[0].hidden) {
         fields.forEach(field => {
             field.hidden = false;
         });
@@ -40,8 +43,13 @@ function toggleMultipleFields(formId, fieldClass, buttonId, inputClass, editText
         });
 
         button.textContent = saveText;
+        layout.style.display = "block";
+        form.style.marginTop = "30px";
+        form.style.marginBottom = "30px";
+
     } else {
         if (!form.reportValidity()) return;
+
         form.requestSubmit();
     }
 }
@@ -53,6 +61,7 @@ function restoreProfileForm() {
     if (!formId) return;
 
     const form = document.getElementById(formId);
+
     if (!form) return;
 
     const button = form.querySelector("button");
@@ -65,23 +74,21 @@ function restoreProfileForm() {
         if (input) input.disabled = false;
 
         if (button) button.textContent = "Save Name";
-    } else if (formId === "emailForm") {
+    }
+
+    if (formId === "emailForm") {
         form.querySelectorAll(".changeEmail").forEach(field => {
             field.hidden = false;
-        });
-
-        form.querySelectorAll(".emailInput").forEach(input => {
-            input.disabled = false;
+            field.disabled = false;
         });
 
         if (button) button.textContent = "Save Email";
-    } else if (formId === "passwordForm") {
+    }
+
+    if (formId === "passwordForm") {
         form.querySelectorAll(".changePassword").forEach(field => {
             field.hidden = false;
-        });
-
-        form.querySelectorAll(".passwordInput").forEach(input => {
-            input.disabled = false;
+            field.disabled = false;
         });
 
         if (button) button.textContent = "Save Password";
@@ -89,11 +96,8 @@ function restoreProfileForm() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-
- 
     restoreProfileForm();
 
- 
     const toggle = document.getElementById("navbarToggle");
     const menu = document.getElementById("navbarMenu");
 
@@ -105,5 +109,4 @@ document.addEventListener("DOMContentLoaded", function () {
             toggle.setAttribute("aria-expanded", isExpanded);
         });
     }
-
 });

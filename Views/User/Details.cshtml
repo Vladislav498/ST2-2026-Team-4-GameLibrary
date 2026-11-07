@@ -1,5 +1,4 @@
 @model ST2_2026_Team_4_GameLibrary.Models.User
-
 @using System.Security.Claims
 
 @{
@@ -12,7 +11,7 @@
 <div class="profile-container"
      data-open-profile-form="@(TempData["OpenProfileForm"])">
 
-    <h2 class="profile-heading">User Profile</h2>
+    <h2 class="profile-heading">Профил</h2>
 
     @if (TempData["ProfileMessage"] != null)
     {
@@ -23,20 +22,14 @@
 
     <div class="profile-card">
 
-        <div class="profile-information">
-            <h3 id="displayedName">@Model.UserName</h3>
-
-            <p>
-                <strong>Email:</strong>
-                @(string.IsNullOrEmpty(Model.Email) ? "Not provided" : Model.Email)
-            </p>
-        </div>
 
         @if (isOwnProfile)
         {
-            <div class="profile-divider"></div>
+         
 
-            <!-- CHANGE NAME -->
+        <div id="nameChangeDiv">
+
+         <span>@Model.UserName</span>
             <form id="nameForm"
                   asp-controller="User"
                   asp-action="ChangeName"
@@ -56,18 +49,36 @@
                            name="userName"
                            class="form-control"
                            value="@Model.UserName"
+                           disabled
                            required />
                 </div>
 
                 <button type="button"
                         id="nameButton"
-                        class="btn btn-primary"
-                        onclick="toggleSingleField('nameForm', 'nameField', 'nameButton', 'nameInput', 'Change Name', 'Save Name')">
-                    Change Name
-                </button>
-            </form>
+                        class="btn-small"
+                        onclick="toggleSingleField(
+                    'nameForm',
+                    'nameField',
+                    'nameButton',
+                    'nameInput',
+                    'Редактирай',
+                    'Запази',
+                    'nameChangeDiv')">
 
-            <!-- CHANGE EMAIL -->
+                    Редактирай
+                </button>
+
+                </form>
+            </div>
+
+
+            <div class="profile-divider"></div>
+
+
+            <div id="emailChangeDiv">
+                <span>Email: @Model.Email</span>
+        
+
             <form id="emailForm"
                   asp-controller="User"
                   asp-action="ChangeEmail"
@@ -98,13 +109,23 @@
 
                 <button type="button"
                         id="emailButton"
-                        class="btn btn-primary"
-                        onclick="toggleMultipleFields('emailForm', 'changeEmail', 'emailButton', 'emailInput', 'Change Email', 'Save Email')">
-                    Change Email
-                </button>
-            </form>
+                        class="btn-small"
+                        onclick="toggleMultipleFields(
+                    'emailForm',
+                    'changeEmail',
+                    'emailButton',
+                    'emailInput',
+                    'Редактирай',
+                    'Запази',
+                    'emailChangeDiv'
+)">
 
-            <!-- CHANGE PASSWORD -->
+                  Редактирай
+                </button>
+
+            </form>
+            </div>
+   
             <form id="passwordForm"
                   asp-controller="User"
                   asp-action="ChangePassword"
@@ -144,12 +165,25 @@
 
                 <button type="button"
                         id="passwordButton"
-                        class="btn btn-primary"
-                        onclick="toggleMultipleFields('passwordForm', 'changePassword', 'passwordButton', 'passwordInput', 'Change Password', 'Save Password')">
-                    Change Password
+                        class="btn-small"
+                        onclick="toggleMultipleFields(
+                    'passwordForm',
+                    'changePassword',
+                    'passwordButton',
+                    'passwordInput',
+                    'Смени парола',
+                    'Запази парола',
+                    'passwordForm')">
+
+                    Смени парола
                 </button>
+
             </form>
         }
+
+
+
+
 
     </div>
 
@@ -158,6 +192,7 @@
         <a asp-controller="Home"
            asp-action="Index"
            class="btn btn-secondary">
+
             Обратно
         </a>
 
@@ -166,11 +201,13 @@
             <button type="button"
                     class="btn btn-danger"
                     onclick="document.getElementById('deleteProfileDialog').showModal()">
+
                 Изтрий профил
             </button>
         }
 
     </div>
+
 
     @if (isOwnProfile)
     {
@@ -192,6 +229,7 @@
                 <input type="hidden" name="id" value="@Model.Id" />
 
                 <div class="dialog-form-group">
+
                     <label for="deleteCurrentPassword" class="form-label">
                         Текуща парола
                     </label>
@@ -202,6 +240,7 @@
                            class="form-control"
                            autocomplete="current-password"
                            required />
+
                 </div>
 
                 <div class="dialog-actions">
@@ -209,6 +248,7 @@
                     <button type="button"
                             class="btn btn-secondary"
                             onclick="document.getElementById('deleteProfileDialog').close()">
+
                         Отказ
                     </button>
 
@@ -217,6 +257,7 @@
                     </button>
 
                 </div>
+
             </form>
 
         </dialog>
