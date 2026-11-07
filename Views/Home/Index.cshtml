@@ -200,12 +200,20 @@
                         </div>
                        
                         <div class="game-actions">
-                            <a asp-action="Details"
-   asp-controller="Game"
-   asp-route-id="@game.Id"
-   class="btn-view">
-    View Details
-</a>
+                            <a asp-action="Details" asp-controller="Game" asp-route-id="@game.Id" class="btn-view">
+                                View Details
+                            </a>
+
+                            @if (User.Identity?.IsAuthenticated == true)
+                            {
+                                <form asp-controller="Library" asp-action="Add" method="post" class="d-inline">
+                                    <input type="hidden" name="gameId" value="@game.Id" />
+
+                                    <button type="submit" class="btn btn-success">
+                                        + Добави в библиотеката
+                                    </button>
+                                </form>
+                            }
                         </div>
                     </div>
                 </div>

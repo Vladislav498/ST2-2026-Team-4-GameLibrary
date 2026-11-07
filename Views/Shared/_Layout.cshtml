@@ -39,25 +39,28 @@
 
                         @if (User.Identity?.IsAuthenticated == true)
                         {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Library" asp-action="Index">
+                                    Моята библиотека
+                                </a>
+                            </li>
                             <div class="logged">
-        <form asp-controller="Account"
-              asp-action="Logout"
-              method="post">
-            <button type="submit" class="nav-link text-dark">
-                Logout
-            </button>
-        </form>
-    </div>
+                                <form asp-controller="Account" asp-action="Logout" method="post">
+                                    <button type="submit" class="nav-link text-dark">
+                                        Logout
+                                    </button>
+                                </form>
+                            </div>
                             
                         }
                         else
                         {
-                          <div class="logged">
+                            <div class="logged">
                                 <li>
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account"
-                                   asp-action="Login">Вход</a>
-                            </li>
-                           </div>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Account"
+                                       asp-action="Login">Вход</a>
+                                </li>
+                            </div>
                         }
 
                            

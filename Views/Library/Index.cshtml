@@ -1,0 +1,182 @@
+
+@model IEnumerable<ST2_2026_Team_4_GameLibrary.Models.Game>
+
+@{
+    ViewData["Title"] = "Моята библиотека";
+}
+
+<style>
+    .games-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+
+    .game-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .game-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .game-image {
+        width: 100%;
+        height: 200px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 3rem;
+    }
+
+    .game-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .game-info {
+        padding: 20px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .game-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .game-description {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+        flex-grow: 1;
+        line-height: 1.5;
+    }
+
+    .game-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-view {
+        flex: 1;
+        padding: 10px;
+        background-color: #667eea;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .btn-view:hover {
+        background-color: #5568d3;
+        color: white;
+    }
+
+    .no-games {
+        text-align: center;
+        padding: 60px 20px;
+        background-color: #f5f5f5;
+        border-radius: 10px;
+        color: #666;
+    }
+
+    .no-games-icon {
+        font-size: 4rem;
+        margin-bottom: 20px;
+    }
+</style>
+
+<h1>Моята библиотека</h1>
+
+<p class="text-muted">
+    Всички игри, които си добавил към личната си библиотека.
+</p>
+
+@if (Model != null && Model.Any())
+{
+    <div class="games-grid">
+        @foreach (var game in Model)
+        {
+            <div class="game-card">
+                <div class="game-image">
+                    @if (!string.IsNullOrEmpty(game.ImagePath))
+                    {
+                        <img src="@game.ImagePath" alt="@game.Title" />
+                    }
+                    else
+                    {
+                        <div>🎲</div>
+                    }
+                </div>
+
+                <div class="game-info">
+                    <div class="game-title">@game.Title</div>
+
+                    <div class="game-description">
+                        @if (!string.IsNullOrEmpty(game.Description))
+                        {
+                            @(game.Description.Length > 100
+                                ? game.Description.Substring(0, 100) + "..."
+                                : game.Description)
+                        }
+                    </div>
+
+                    <p><strong>Жанр:</strong> @game.Genre</p>
+                    <p><strong>Разработчик:</strong> @game.Developer</p>
+
+                    <div class="game-actions">
+                        <a asp-controller="Game"
+                           asp-action="Details"
+                           asp-route-id="@game.Id"
+                           class="btn-view">
+                            Детайли
+                        </a>
+
+                        <form asp-controller="Library"
+                              asp-action="Remove"
+                              method="post">
+                            <input type="hidden"
+                                   name="gameId"
+                                   value="@game.Id" />
+
+                            <button type="submit"
+                                    class="btn btn-danger">
+                                Премахни
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="no-games">
+        <div class="no-games-icon">🎮</div>
+        <p>Все още нямаш добавени игри.</p>
+
+        <a asp-controller="Game"
+           asp-action="Index"
+           class="btn btn-primary">
+            Разгледай каталога
+        </a>
+    </div>
+}
