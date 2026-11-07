@@ -1,4 +1,3 @@
-
 @model ST2_2026_Team_4_GameLibrary.Models.User
 @using System.Security.Claims
 
@@ -9,68 +8,88 @@
     var isOwnProfile = currentUserId == Model.Id;
 }
 
-<div class="container mt-4"
-     data-open-profile-form="@TempData["OpenProfileForm"]">
+<div class="profile-container"
+     data-open-profile-form="@(TempData["OpenProfileForm"])">
 
-    <h2>User Profile</h2>
+    <h2 class="profile-heading">Профил</h2>
 
     @if (TempData["ProfileMessage"] != null)
     {
-        <div class="alert alert-info" role="status">
+        <div class="profile-message" role="status">
             @TempData["ProfileMessage"]
         </div>
     }
 
-    <div class="card p-4 mb-4">
-        <h4 id="displayedName">@Model.UserName</h4>
+    <div class="profile-card">
 
-        <p>
-            <strong>Email:</strong>
-            @(string.IsNullOrEmpty(Model.Email) ? "Not provided" : Model.Email)
-        </p>
 
         @if (isOwnProfile)
         {
-            <hr />
+         
 
-            @* Change Name *@
+        <div id="nameChangeDiv">
+
+         <span>@Model.UserName</span>
             <form id="nameForm"
                   asp-controller="User"
                   asp-action="ChangeName"
                   method="post"
-                  class="mb-3">
+                  class="profile-form">
 
                 @Html.AntiForgeryToken()
+
                 <input type="hidden" name="id" value="@Model.Id" />
 
                 <div id="nameField" hidden>
-                    <label for="nameInput" class="form-label">Ново име</label>
+                    <label for="nameInput" class="form-label">
+                        Ново име
+                    </label>
+
                     <input id="nameInput"
                            name="userName"
-                           class="form-control mb-2"
+                           class="form-control"
                            value="@Model.UserName"
+                           disabled
                            required />
                 </div>
 
                 <button type="button"
                         id="nameButton"
-                        class="btn btn-primary"
-                        onclick="toggleSingleField('nameForm', 'nameField', 'nameButton', 'nameInput', 'Change Name', 'Save Name')">
-                    Change Name
-                </button>
-            </form>
+                        class="btn-small"
+                        onclick="toggleSingleField(
+                    'nameForm',
+                    'nameField',
+                    'nameButton',
+                    'nameInput',
+                    'Редактирай',
+                    'Запази',
+                    'nameChangeDiv')">
 
-            @* Change Email *@
+                    Редактирай
+                </button>
+
+                </form>
+            </div>
+
+
+            <div class="profile-divider"></div>
+
+
+            <div id="emailChangeDiv">
+                <span>Email: @Model.Email</span>
+        
+
             <form id="emailForm"
                   asp-controller="User"
                   asp-action="ChangeEmail"
                   method="post"
-                  class="mb-3">
+                  class="profile-form">
 
                 @Html.AntiForgeryToken()
+
                 <input type="hidden" name="id" value="@Model.Id" />
 
-                <input class="changeEmail emailInput form-control mb-2"
+                <input class="changeEmail emailInput form-control"
                        type="email"
                        name="email"
                        placeholder="Нов имейл"
@@ -79,7 +98,7 @@
                        disabled
                        required />
 
-                <input class="changeEmail emailInput form-control mb-2"
+                <input class="changeEmail emailInput form-control"
                        type="password"
                        name="currentPassword"
                        placeholder="Текуща парола"
@@ -90,23 +109,34 @@
 
                 <button type="button"
                         id="emailButton"
-                        class="btn btn-primary"
-                        onclick="toggleMultipleFields('emailForm', 'changeEmail', 'emailButton', 'emailInput', 'Change Email', 'Save Email')">
-                    Change Email
-                </button>
-            </form>
+                        class="btn-small"
+                        onclick="toggleMultipleFields(
+                    'emailForm',
+                    'changeEmail',
+                    'emailButton',
+                    'emailInput',
+                    'Редактирай',
+                    'Запази',
+                    'emailChangeDiv'
+)">
 
-            @* Change Password *@
+                  Редактирай
+                </button>
+
+            </form>
+            </div>
+   
             <form id="passwordForm"
                   asp-controller="User"
                   asp-action="ChangePassword"
                   method="post"
-                  class="mb-3">
+                  class="profile-form">
 
                 @Html.AntiForgeryToken()
+
                 <input type="hidden" name="id" value="@Model.Id" />
 
-                <input class="changePassword passwordInput form-control mb-2"
+                <input class="changePassword passwordInput form-control"
                        type="password"
                        name="currentPassword"
                        placeholder="Текуща парола"
@@ -115,7 +145,7 @@
                        disabled
                        required />
 
-                <input class="changePassword passwordInput form-control mb-2"
+                <input class="changePassword passwordInput form-control"
                        type="password"
                        name="newPassword"
                        placeholder="Нова парола"
@@ -124,7 +154,7 @@
                        disabled
                        required />
 
-                <input class="changePassword passwordInput form-control mb-2"
+                <input class="changePassword passwordInput form-control"
                        type="password"
                        name="confirmPassword"
                        placeholder="Потвърди нова парола"
@@ -135,21 +165,102 @@
 
                 <button type="button"
                         id="passwordButton"
-                        class="btn btn-primary"
-                        onclick="toggleMultipleFields('passwordForm', 'changePassword', 'passwordButton', 'passwordInput', 'Change Password', 'Save Password')">
-                    Change Password
+                        class="btn-small"
+                        onclick="toggleMultipleFields(
+                    'passwordForm',
+                    'changePassword',
+                    'passwordButton',
+                    'passwordInput',
+                    'Смени парола',
+                    'Запази парола',
+                    'passwordForm')">
+
+                    Смени парола
                 </button>
+
             </form>
         }
-        else
-        {
-           
-        }
+
+
+
+
+
     </div>
 
-    <a asp-controller="Home"
-       asp-action="Index"
-       class="btn btn-secondary">
-       Обратно
-    </a>
+    <div class="profile-actions">
+
+        <a asp-controller="Home"
+           asp-action="Index"
+           class="btn btn-secondary">
+
+            Обратно
+        </a>
+
+        @if (isOwnProfile)
+        {
+            <button type="button"
+                    class="btn btn-danger"
+                    onclick="document.getElementById('deleteProfileDialog').showModal()">
+
+                Изтрий профил
+            </button>
+        }
+
+    </div>
+
+
+    @if (isOwnProfile)
+    {
+        <dialog id="deleteProfileDialog" class="profile-dialog">
+
+            <h3>Изтриване на профил</h3>
+
+            <p>
+                Сигурни ли сте, че искате да изтриете профила си?
+                Това действие е необратимо.
+            </p>
+
+            <form asp-controller="User"
+                  asp-action="DeleteProfile"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" name="id" value="@Model.Id" />
+
+                <div class="dialog-form-group">
+
+                    <label for="deleteCurrentPassword" class="form-label">
+                        Текуща парола
+                    </label>
+
+                    <input type="password"
+                           id="deleteCurrentPassword"
+                           name="currentPassword"
+                           class="form-control"
+                           autocomplete="current-password"
+                           required />
+
+                </div>
+
+                <div class="dialog-actions">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            onclick="document.getElementById('deleteProfileDialog').close()">
+
+                        Отказ
+                    </button>
+
+                    <button type="submit" class="btn btn-danger">
+                        Потвърди изтриването
+                    </button>
+
+                </div>
+
+            </form>
+
+        </dialog>
+    }
+
 </div>

@@ -1,8 +1,8 @@
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ST2_2026_Team_4_GameLibrary.Models;
-using System.Diagnostics;
 
 namespace ST2_2026_Team_4_GameLibrary.Controllers
 {
@@ -10,12 +10,15 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
     public class UserController : Controller
     {
         private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
 
-        public UserController(UserManager<User> userManager)
+        public UserController(
+            UserManager<User> userManager,
+            SignInManager<User> signInManager)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
         }
-
 
         [HttpGet]
         public async Task<IActionResult> Details(string? id)
@@ -37,11 +40,47 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
             return View(user);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteProfile(
+            string id,
+            string currentPassword)
+        {
+            if (_userManager.GetUserId(User) != id)
+                return Forbid();
+
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+                return NotFound();
+
+            if (string.IsNullOrWhiteSpace(currentPassword) ||
+                !await _userManager.CheckPasswordAsync(user, currentPassword))
+            {
+                TempData["ProfileMessage"] = "Грешна парола.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+
+            if (!result.Succeeded)
+            {
+                TempData["ProfileMessage"] =
+                    string.Join(" ", result.Errors.Select(e => e.Description));
+
+                return RedirectToAction(nameof(Details), new { id });
+            }
+
+            await _signInManager.SignOutAsync();
+
+            return RedirectToAction("Index", "Home");
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangeName(
-            string id, string userName)
+            string id,
+            string userName)
         {
             if (_userManager.GetUserId(User) != id)
                 return Forbid();
@@ -53,7 +92,10 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
 
             if (string.IsNullOrWhiteSpace(userName))
             {
-                SetProfileError("Името е задължително.", "nameForm");
+                SetProfileError(
+                    "Името е задължително.",
+                    "nameForm");
+
                 return RedirectToAction(nameof(Details), new { id });
             }
 
@@ -74,11 +116,12 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
             return RedirectToAction(nameof(Details), new { id });
         }
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangeEmail(
-            string id, string email, string currentPassword)
+            string id,
+            string email,
+            string currentPassword)
         {
             if (_userManager.GetUserId(User) != id)
                 return Forbid();
@@ -90,7 +133,10 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
 
             if (string.IsNullOrWhiteSpace(email))
             {
-                SetProfileError("Email is required.", "emailForm");
+                SetProfileError(
+                    "Имейлът е задължителен.",
+                    "emailForm");
+
                 return RedirectToAction(nameof(Details), new { id });
             }
 
@@ -121,7 +167,6 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
             return RedirectToAction(nameof(Details), new { id });
         }
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(
@@ -150,7 +195,7 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
             if (string.IsNullOrWhiteSpace(newPassword))
             {
                 SetProfileError(
-                    "Новата парола е задължителна .",
+                    "Новата парола е задължителна.",
                     "passwordForm");
 
                 return RedirectToAction(nameof(Details), new { id });
@@ -177,6 +222,8 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
                 return RedirectToAction(nameof(Details), new { id });
             }
 
+            await _signInManager.RefreshSignInAsync(user);
+
             TempData["ProfileMessage"] = "Паролата е променена успешно.";
 
             return RedirectToAction(nameof(Details), new { id });
@@ -187,7 +234,5 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
             TempData["ProfileMessage"] = message;
             TempData["OpenProfileForm"] = formName;
         }
-
-
     }
 }
