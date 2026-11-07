@@ -10,12 +10,15 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
     public class UserController : Controller
     {
         private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
 
-        public UserController(UserManager<User> userManager)
+        public UserController(
+            UserManager<User> userManager,
+            SignInManager<User> signInManager)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
         }
-
 
         [HttpGet]
         public async Task<IActionResult> Details(string? id)
@@ -36,6 +39,49 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
 
             return View(user);
         }
+
+
+
+       
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteProfile(
+    string id, string currentPassword)
+        {
+          
+            if (_userManager.GetUserId(User) != id)
+                return Forbid();
+
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+                return NotFound();
+
+          
+            if (string.IsNullOrWhiteSpace(currentPassword) ||
+                !await _userManager.CheckPasswordAsync(user, currentPassword))
+            {
+                TempData["ProfileMessage"] = "Грешна парола";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+
+            if (!result.Succeeded)
+            {
+                TempData["ProfileMessage"] =
+                    string.Join(" ", result.Errors.Select(e => e.Description));
+
+                return RedirectToAction(nameof(Details), new { id });
+            }
+
+          
+            await _signInManager.SignOutAsync();
+
+            return RedirectToAction("Index", "Home");
+        }
+
+
 
 
         [HttpPost]
@@ -190,4 +236,6 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
 
 
     }
+
+
 }

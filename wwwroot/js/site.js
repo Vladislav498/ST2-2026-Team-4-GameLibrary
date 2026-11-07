@@ -1,10 +1,4 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
-
-
-
+﻿
 function toggleSingleField(formId, fieldId, buttonId, inputId, editText, saveText) {
     const form = document.getElementById(formId);
     const field = document.getElementById(fieldId);
@@ -15,6 +9,7 @@ function toggleSingleField(formId, fieldId, buttonId, inputId, editText, saveTex
 
     if (field.hidden) {
         field.hidden = false;
+        input.disabled = false;
         button.textContent = saveText;
     } else {
         if (!form.reportValidity()) return;
@@ -64,7 +59,10 @@ function restoreProfileForm() {
 
     if (formId === "nameForm") {
         const field = document.getElementById("nameField");
+        const input = document.getElementById("nameInput");
+
         if (field) field.hidden = false;
+        if (input) input.disabled = false;
 
         if (button) button.textContent = "Save Name";
     } else if (formId === "emailForm") {
@@ -90,4 +88,22 @@ function restoreProfileForm() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", restoreProfileForm);
+document.addEventListener("DOMContentLoaded", function () {
+
+ 
+    restoreProfileForm();
+
+ 
+    const toggle = document.getElementById("navbarToggle");
+    const menu = document.getElementById("navbarMenu");
+
+    if (toggle && menu) {
+        toggle.addEventListener("click", function () {
+            menu.classList.toggle("show");
+
+            const isExpanded = menu.classList.contains("show");
+            toggle.setAttribute("aria-expanded", isExpanded);
+        });
+    }
+
+});
