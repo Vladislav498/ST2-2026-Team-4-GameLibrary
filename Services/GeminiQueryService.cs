@@ -170,8 +170,25 @@ try
             "Gemini не върна валиден JSON обект.");
     }
 
-    return GeminiQueryResult.Ok(
-        responseText, responseText);
+    var query = JsonSerializer.Deserialize<JSONQuery>(responseText);
+
+if (query is null)
+{
+    return GeminiQueryResult.Fail(
+        "Gemini върна празна заявка.");
+}
+
+if (!GameQueryValidator.TryValidate(query, out var validationError))
+{
+    _logger.LogWarning(
+        "Gemini върна невалидна заявка: {ValidationError}",
+        validationError);
+
+    return GeminiQueryResult.Fail(
+        "Gemini върна заявка, която не отговаря на правилата за търсене.");
+}
+
+return GeminiQueryResult.Ok(responseText, responseText);
 }
 catch (OperationCanceledException)
     when (cancellationToken.IsCancellationRequested)
