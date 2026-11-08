@@ -4,15 +4,17 @@ namespace ST2_2026_Team_4_GameLibrary.Models
 {
     public class LoginDto
     {
-        [Required(ErrorMessage = "Email is required")]
-        [EmailAddress(ErrorMessage = "Invalid email address")]
+        [Display(Name = "Имейл")]
+        [Required(ErrorMessage = "Имейлът е задължителен")]
+        [EmailAddress(ErrorMessage = "Невалиден имейл")]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "Password is required")]
+        [Display(Name = "Парола")]
+        [Required(ErrorMessage = "Паролата е задължителна")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        [Display(Name = "Remember me?")]
+        [Display(Name = "Запомни ме")]
         public bool RememberMe { get; set; }
     }
 }

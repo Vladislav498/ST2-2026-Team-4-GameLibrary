@@ -1,40 +1,70 @@
+
 @model RegisterDto
+
 @{
     ViewData["Title"] = "Register";
 }
 
-<h1>@ViewData["Title"]</h1>
+<div class="profile-container">
 
-<form method="post">
-    <div asp-validation-summary="ModelOnly"></div>
+    <h2 class="profile-heading">Създай акаунт</h2>
 
-    <div>
-        <label asp-for="Name"></label>
-        <input asp-for="Name" />
-        <span asp-validation-for="Name"></span>
+    <div class="profile-card">
+
+        <form method="post" class="profile-form">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="profile-message"></div>
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name"
+                       class="form-control"
+                       autocomplete="name" />
+                <span asp-validation-for="Name"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email"
+                       class="form-control"
+                       autocomplete="email" />
+                <span asp-validation-for="Email"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label"></label>
+                <input asp-for="Password"
+                       type="password"
+                       class="form-control"
+                       autocomplete="new-password" />
+                <span asp-validation-for="Password"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ConfirmPassword" class="form-label"></label>
+                <input asp-for="ConfirmPassword"
+                       type="password"
+                       class="form-control"
+                       autocomplete="new-password" />
+                <span asp-validation-for="ConfirmPassword"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+              Създай акаунт
+            </button>
+
+        </form>
+
+        <div class="profile-divider"></div>
+
+        <p>
+            Вече имаш акаунт?
+            <a asp-action="Login" asp-controller="Account">
+                Влез
+            </a>
+        </p>
+
     </div>
 
-    <div>
-        <label asp-for="Email"></label>
-        <input asp-for="Email" />
-        <span asp-validation-for="Email"></span>
-    </div>
-
-    <div>
-        <label asp-for="Password"></label>
-        <input asp-for="Password" type="password" />
-        <span asp-validation-for="Password"></span>
-    </div>
-
-    <div>
-        <label asp-for="ConfirmPassword"></label>
-        <input asp-for="ConfirmPassword" type="password" />
-        <span asp-validation-for="ConfirmPassword"></span>
-    </div>
-
-    <button type="submit">Create account</button>
-</form>
-
-<p>
-    <a asp-action="Login" asp-controller="Account">Already have an account?</a>
-</p>
+</div>

@@ -6,12 +6,12 @@
 }
 
 <div class="hero-section">
-    <h1>Welcome to GameLibrary</h1>
-    <p>Discover and explore our collection of amazing games</p>
+    <h1>Добре дошъл в GameLibrary</h1>
+    <p>Мястото, където никой не пипа трева :)</p>
 </div>
 
 <div class="featured-games">
-    <h2>Recommended</h2>
+    <h2>Любими в момента</h2>
 
     @if (Model != null && Model.Any())
     {
@@ -42,13 +42,13 @@
                             }
                             else
                             {
-                                <span>No description available.</span>
+                                <span>Няма налично описание.</span>
                             }
                         </p>
 
                         <div class="game-actions">
                             <a asp-action="Details" asp-controller="Game" asp-route-id="@game.Id" class="btn-view">
-                                View Details
+                                Повече
                             </a>
 
                             @if (User.Identity?.IsAuthenticated == true)
@@ -71,8 +71,8 @@
     {
         <div class="no-games">
             <div class="no-games-icon">🎮</div>
-            <p>No featured games available at the moment.</p>
-            <p>Check back soon for exciting new games!</p>
+            <p>Няма предложени игри. </p>
+            <p>Кой изтри базата отново...</p>
         </div>
     }
 </div>
