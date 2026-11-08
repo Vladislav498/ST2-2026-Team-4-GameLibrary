@@ -106,7 +106,7 @@ namespace ST2_2026_Team_4_GameLibrary.Services
         {
             string field = condition.Field.ToLowerInvariant();
             string op = condition.Operator.ToLowerInvariant();
-            string value = condition.Value;
+            string value = condition.Value.Trim();
 
             Expression property = field switch
             {
@@ -126,7 +126,8 @@ namespace ST2_2026_Team_4_GameLibrary.Services
                     throw new ArgumentException("Невалидна стойност за Id.");
                 }
 
-                return BuildComparison(property, op, Expression.Constant(id));
+                return BuildComparison(
+                    property, op, Expression.Constant(id));
             }
 
             if (field == "releasedate")
@@ -140,11 +141,62 @@ namespace ST2_2026_Team_4_GameLibrary.Services
                     throw new ArgumentException("Невалидна дата.");
                 }
 
-                return BuildComparison(property, op, Expression.Constant(date));
+                return BuildComparison(
+                    property, op, Expression.Constant(date));
+            }
+
+            if (field == "genre" && (op == "contains" || op == "equals"))
+            {
+                var genreValue = Expression.Call(
+                    Expression.Coalesce(property, Expression.Constant(string.Empty)),
+                    typeof(string).GetMethod(
+                        nameof(string.Replace),
+                        new[] { typeof(string), typeof(string) })!,
+                    Expression.Constant(", "),
+                    Expression.Constant(","));
+
+                genreValue = Expression.Call(
+                    genreValue,
+                    typeof(string).GetMethod(
+                        nameof(string.ToLower),
+                        Type.EmptyTypes)!);
+
+                string searchValue = value.Trim().ToLowerInvariant();
+
+                var contains = Expression.Call(
+                    genreValue,
+                    typeof(string).GetMethod(
+                        nameof(string.Contains),
+                        new[] { typeof(string) })!,
+                    Expression.Constant("," + searchValue + ","));
+
+                var startsWith = Expression.Call(
+                    genreValue,
+                    typeof(string).GetMethod(
+                        nameof(string.StartsWith),
+                        new[] { typeof(string) })!,
+                    Expression.Constant(searchValue + ","));
+
+                var endsWith = Expression.Call(
+                    genreValue,
+                    typeof(string).GetMethod(
+                        nameof(string.EndsWith),
+                        new[] { typeof(string) })!,
+                    Expression.Constant("," + searchValue));
+
+                var equals = Expression.Equal(
+                    genreValue,
+                    Expression.Constant(searchValue));
+
+                return Expression.OrElse(
+                    Expression.OrElse(contains, startsWith),
+                    Expression.OrElse(endsWith, equals));
             }
 
             Expression stringProperty = field == "description"
-                ? Expression.Coalesce(property, Expression.Constant(string.Empty))
+                ? Expression.Coalesce(
+                    property,
+                    Expression.Constant(string.Empty))
                 : property;
 
             var constant = Expression.Constant(value);
@@ -152,6 +204,7 @@ namespace ST2_2026_Team_4_GameLibrary.Services
             return op switch
             {
                 "equals" => Expression.Equal(stringProperty, constant),
+
                 "notequals" => Expression.NotEqual(stringProperty, constant),
 
                 "contains" => Expression.Call(

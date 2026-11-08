@@ -97,6 +97,9 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
                         jsonQuery!,
                         cancellationToken);
 
+                    Console.WriteLine(
+System.Text.Json.JsonSerializer.Serialize(jsonQuery));
+
                     ViewBag.AiSearchActive = true;
 
                     return View(games);
@@ -229,7 +232,7 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-       
+
         public async Task<IActionResult> Edit(int id, Game game)
         {
             if (id != game.Id)
@@ -249,7 +252,7 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
                 return View(game);
             }
 
-         
+
             existing.Title = game.Title;
             existing.Description = game.Description;
             existing.Genre = game.Genre;
@@ -258,7 +261,7 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
 
             string? oldImagePath = existing.ImagePath;
 
-      
+
 
 
 
@@ -307,7 +310,7 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
 
             await _context.SaveChangesAsync();
 
-            
+
             if (game.CoverImage != null &&
                 !string.IsNullOrEmpty(oldImagePath))
             {
