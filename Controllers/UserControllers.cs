@@ -234,5 +234,19 @@ namespace ST2_2026_Team_4_GameLibrary.Controllers
             TempData["ProfileMessage"] = message;
             TempData["OpenProfileForm"] = formName;
         }
+
+
+        [AllowAnonymous]
+        [AcceptVerbs("GET", "POST")]
+        public async Task<IActionResult> IsNameAvailable(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return Json(true); // [Required] handles the empty case
+
+            var existing = await _userManager.FindByNameAsync(name.Trim());
+            var currentUserId = _userManager.GetUserId(User);
+
+            return Json(existing == null || existing.Id == currentUserId);
+        }
     }
 }

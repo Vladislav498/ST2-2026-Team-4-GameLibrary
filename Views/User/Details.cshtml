@@ -22,9 +22,14 @@
 
     <div class="profile-card">
 
+            @if (!isOwnProfile)
+    {
+        <h3>@Model.UserName</h3>
+    }
 
-        @if (isOwnProfile)
-        {
+
+     
+        else{
          
 
         <div id="nameChangeDiv">
